@@ -11,10 +11,12 @@
 #include "sha-512.h"
 
 /**
- *
+ * Reads input from the open file, fp, and stores the data in the buffer.
+ * When the end of the file is reached, the global variable, file_ended,
+ * is set to 1. Pads the end of the buffer according to the algorithm.
  * 
- * Returns: 0 if the file still has more input to read. 1 if all of the message
- *          from the input file has been read.
+ * Returns: 0 if there needs to be another hash block.
+ *          1 if there does not need to be another hash block.
  */
 int readInputFile(char buffer[INPUT_SIZE], FILE *fp) {
   int i, output = 0;
@@ -42,7 +44,8 @@ int readInputFile(char buffer[INPUT_SIZE], FILE *fp) {
 }
 
 /**
- *
+ * Updates the hash buffer (a, b, c, d, e, f, g, h) during a round in the
+ * SHA-512 algorithm.
  */
 void updateHashBuffer(int t) {
   unsigned long int temp = h + Ch(e, f, g) + Sigma1(e) + W[t] + K[t];
@@ -56,6 +59,9 @@ void updateHashBuffer(int t) {
   a = Sigma0(b) + Maj(b, c, d) + temp;
 }
 
+/**
+ * Assigns the word schedule from the given input.
+ */
 void assignWordScedule(char M[INPUT_SIZE]) {
   int i, j;
   for (i = 0; i < 16; i++) {
